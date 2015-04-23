@@ -1,0 +1,22 @@
+#!/usr/bin/ruby 
+
+require 'csv'
+
+opts = { 
+  headers: true, 
+  header_converters: :symbol, 
+}
+
+combined = ARGV.map { |file| CSV.read(file, opts).map { |r| r.to_hash } }.flatten
+
+headers = combined.map { |h| h.keys }.flatten.uniq
+
+puts headers.to_csv
+combined.each do |row|
+  puts headers.map { |h| row[h] }.to_csv
+end
+
+
+
+
+
