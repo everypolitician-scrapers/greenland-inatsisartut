@@ -1,18 +1,26 @@
 #!/usr/bin/ruby 
 
 require 'csv'
+require 'securerandom'
 
 opts = { 
   headers: true, 
   header_converters: :symbol, 
 }
 
+@ids = {}
+def id_for(row, key)
+  @ids[row[key]] ||= SecureRandom.uuid
+end
+
 combined = ARGV.map { |file| CSV.read(file, opts).map { |r| r.to_hash } }.flatten
 
-headers = combined.map { |h| h.keys }.flatten.uniq
+headers = ([:id] + combined.map { |h| h.keys }).flatten.uniq
 
 puts headers.to_csv
 combined.each do |row|
+  # TODO: specify the group by field as a command line option
+  row[:id] ||= id_for(row, :name)
   puts headers.map { |h| row[h] }.to_csv
 end
 
