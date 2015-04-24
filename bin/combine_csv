@@ -2,25 +2,33 @@
 
 require 'csv'
 require 'securerandom'
+require 'trollop'
 
-opts = { 
+opts = Trollop::options do
+  opt :id, "Pseudo-ID field", :type => :string
+end
+
+csv_opts = { 
   headers: true, 
   header_converters: :symbol, 
 }
 
 @ids = {}
 def id_for(row, key)
+  row.has_key? key or raise "#{row} has no ID, and no #{key}"
   @ids[row[key]] ||= SecureRandom.uuid
 end
 
-combined = ARGV.map { |file| CSV.read(file, opts).map { |r| r.to_hash } }.flatten
+combined = ARGV.map { |file| CSV.read(file, csv_opts).map { |r| r.to_hash } }.flatten
 
 headers = ([:id] + combined.map { |h| h.keys }).flatten.uniq
 
 puts headers.to_csv
 combined.each do |row|
-  # TODO: specify the group by field as a command line option
-  row[:id] ||= id_for(row, :name)
+  unless row[:id]
+    opts[:id_given] or raise "Row #{row} has no id, and no --id field was specified"
+    row[:id] = id_for(row, opts[:id].to_sym)
+  end
   puts headers.map { |h| row[h] }.to_csv
 end
 
