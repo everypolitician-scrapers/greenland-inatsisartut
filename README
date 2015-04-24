@@ -1,4 +1,4 @@
 ﻿
 ```
-bin/combine_csv raw/*parl.csv --id name > greenland.csv
+bin/combine_csv raw/*parl.csv --id name | bin/post_process > greenland.csv
 ```

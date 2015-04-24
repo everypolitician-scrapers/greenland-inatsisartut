@@ -1,0 +1,24 @@
+#!/usr/bin/ruby 
+
+require 'csv'
+
+csv_opts = { 
+  headers: true, 
+  header_converters: :symbol, 
+}
+
+def process(row)
+  row[:name]  = row[:name].split(',').first.gsub(/\s+/,' ')
+  row[:party] = row[:party].gsub('_', ' ')
+  row
+end
+
+data = CSV.parse(ARGF.read, csv_opts)
+puts data.headers.to_csv
+data.each { |row| puts process(row).to_csv }
+
+
+
+
+
+
