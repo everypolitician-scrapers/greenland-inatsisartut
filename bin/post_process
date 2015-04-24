@@ -8,6 +8,10 @@ csv_opts = {
 }
 
 def process(row)
+  if row[:image] 
+    row[:image].gsub!(' ','%20') 
+    row[:image].prepend "http://en.inatsisartut.gl" unless row[:image].start_with?('http')
+  end
   row[:name]  = row[:name].split(',').first.gsub(/\s+/,' ')
   row[:party] = row[:party].gsub('_', ' ')
   row
