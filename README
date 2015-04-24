@@ -1,0 +1,4 @@
+﻿
+```
+bin/combine_csv raw/*parl.csv --id name > greenland.csv
+```
